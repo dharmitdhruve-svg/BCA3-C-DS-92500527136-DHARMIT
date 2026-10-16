@@ -1,0 +1,145 @@
+/* Unit 4 - Q2: Binary search tree - insert/delete, height, total nodes (+ display/search)
+   Marwadi University - BCA | Language: C */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+
+/* Create a new node */
+struct Node *newNode(int value) {
+    struct Node *n = (struct Node *)malloc(sizeof(struct Node));
+    n->data = value;
+    n->left = n->right = NULL;
+    return n;
+}
+
+/* (a) Insert: smaller values go left, larger go right */
+struct Node *insert(struct Node *root, int value) {
+    if (root == NULL)
+        return newNode(value);
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
+    else
+        printf("%d already exists (duplicates not allowed).\n", value);
+    return root;
+}
+
+/* Smallest value in a subtree (leftmost node) */
+struct Node *minNode(struct Node *root) {
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+/* (a) Delete: handles leaf, one child and two children cases */
+struct Node *deleteNode(struct Node *root, int value) {
+    struct Node *temp;
+    if (root == NULL) {
+        printf("%d not found.\n", value);
+        return NULL;
+    }
+    if (value < root->data)
+        root->left = deleteNode(root->left, value);
+    else if (value > root->data)
+        root->right = deleteNode(root->right, value);
+    else {
+        if (root->left == NULL) {          /* no left child (or leaf) */
+            temp = root->right;
+            free(root);
+            return temp;
+        }
+        if (root->right == NULL) {         /* no right child */
+            temp = root->left;
+            free(root);
+            return temp;
+        }
+        /* two children: replace with inorder successor, then delete it */
+        temp = minNode(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+/* (b) Height of the tree (empty tree = 0, single node = 1) */
+int height(struct Node *root) {
+    int lh, rh;
+    if (root == NULL)
+        return 0;
+    lh = height(root->left);
+    rh = height(root->right);
+    return (lh > rh ? lh : rh) + 1;
+}
+
+/* (c) Total number of nodes */
+int countNodes(struct Node *root) {
+    if (root == NULL)
+        return 0;
+    return 1 + countNodes(root->left) + countNodes(root->right);
+}
+
+/* (d) Inorder display (gives sorted order for a BST) */
+void inorder(struct Node *root) {
+    if (root == NULL) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+/* (d) Search a value in the BST */
+int search(struct Node *root, int value) {
+    if (root == NULL) return 0;
+    if (value == root->data) return 1;
+    if (value < root->data) return search(root->left, value);
+    return search(root->right, value);
+}
+
+int main() {
+    struct Node *root = NULL;
+    int choice, value;
+    do {
+        printf("\n1. Insert\n2. Delete\n3. Height of tree\n4. Total nodes\n"
+               "5. Display (inorder)\n6. Search\n0. Exit\nChoice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &value);
+                root = insert(root, value);
+                break;
+            case 2:
+                printf("Enter value to delete: ");
+                scanf("%d", &value);
+                root = deleteNode(root, value);
+                break;
+            case 3:
+                printf("Height = %d\n", height(root));
+                break;
+            case 4:
+                printf("Total nodes = %d\n", countNodes(root));
+                break;
+            case 5:
+                if (root == NULL) printf("Tree is empty.");
+                else { printf("Inorder: "); inorder(root); }
+                printf("\n");
+                break;
+            case 6:
+                printf("Enter value to search: ");
+                scanf("%d", &value);
+                printf(search(root, value) ? "Found.\n" : "Not found.\n");
+                break;
+            case 0:
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    } while (choice != 0);
+    return 0;
+}

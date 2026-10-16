@@ -1,0 +1,67 @@
+/* Unit 4 - Q1: Create a binary tree; traverse in preorder, postorder and inorder
+   Marwadi University - BCA | Language: C */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+
+/* Create the tree recursively.
+   Enter -1 where there is no node (NULL child). */
+struct Node *createTree() {
+    int value;
+    struct Node *newNode;
+    printf("Enter data (-1 for no node): ");
+    scanf("%d", &value);
+    if (value == -1)
+        return NULL;
+    newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = value;
+    printf("--- Left child of %d ---\n", value);
+    newNode->left = createTree();
+    printf("--- Right child of %d ---\n", value);
+    newNode->right = createTree();
+    return newNode;
+}
+
+/* Preorder : Root -> Left -> Right */
+void preorder(struct Node *root) {
+    if (root == NULL) return;
+    printf("%d ", root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
+
+/* Inorder : Left -> Root -> Right */
+void inorder(struct Node *root) {
+    if (root == NULL) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+/* Postorder : Left -> Right -> Root */
+void postorder(struct Node *root) {
+    if (root == NULL) return;
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d ", root->data);
+}
+
+int main() {
+    struct Node *root;
+    printf("Create the binary tree:\n");
+    root = createTree();
+    printf("\nPreorder  : ");
+    preorder(root);
+    printf("\nPostorder : ");
+    postorder(root);
+    printf("\nInorder   : ");
+    inorder(root);
+    printf("\n");
+    return 0;
+}
