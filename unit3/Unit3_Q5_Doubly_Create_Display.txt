@@ -1,0 +1,64 @@
+/* Unit 3 - Q5: Doubly linked list - create a linked list, display it
+   Marwadi University - BCA | Language: C */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Node has two pointers: previous and next */
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+struct Node *create(int n) {
+    struct Node *head = NULL, *tail = NULL, *newNode;
+    int i;
+    for (i = 1; i <= n; i++) {
+        newNode = (struct Node *)malloc(sizeof(struct Node));
+        printf("Enter data for node %d: ", i);
+        scanf("%d", &newNode->data);
+        newNode->prev = NULL;
+        newNode->next = NULL;
+        if (head == NULL)
+            head = tail = newNode;
+        else {
+            tail->next = newNode;   /* forward link */
+            newNode->prev = tail;   /* backward link */
+            tail = newNode;
+        }
+    }
+    return head;
+}
+
+/* Display forward and then backward */
+void display(struct Node *head) {
+    struct Node *temp = head, *last = NULL;
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    printf("Forward : NULL <-> ");
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        last = temp;
+        temp = temp->next;
+    }
+    printf("NULL\n");
+    printf("Backward: NULL <-> ");
+    while (last != NULL) {
+        printf("%d <-> ", last->data);
+        last = last->prev;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node *head;
+    int n;
+    printf("How many nodes? ");
+    scanf("%d", &n);
+    head = create(n);
+    display(head);
+    return 0;
+}

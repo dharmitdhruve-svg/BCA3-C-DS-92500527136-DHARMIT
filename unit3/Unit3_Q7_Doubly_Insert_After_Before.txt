@@ -1,0 +1,113 @@
+/* Unit 3 - Q7: Doubly linked list - insert a node after / before a specific node
+   Marwadi University - BCA | Language: C */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+void insertAtEnd(struct Node **head, int value) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    struct Node *temp = *head;
+    newNode->data = value;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
+    }
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+/* Insert 'value' after the node containing 'key' */
+void insertAfter(struct Node *head, int key, int value) {
+    struct Node *temp = head, *newNode;
+    while (temp != NULL && temp->data != key)
+        temp = temp->next;
+    if (temp == NULL) {
+        printf("Node %d not found.\n", key);
+        return;
+    }
+    newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->prev = temp;
+    newNode->next = temp->next;
+    if (temp->next != NULL)
+        temp->next->prev = newNode;   /* next node points back to new node */
+    temp->next = newNode;
+}
+
+/* Insert 'value' before the node containing 'key' */
+void insertBefore(struct Node **head, int key, int value) {
+    struct Node *temp = *head, *newNode;
+    while (temp != NULL && temp->data != key)
+        temp = temp->next;
+    if (temp == NULL) {
+        printf("Node %d not found.\n", key);
+        return;
+    }
+    newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = temp;
+    newNode->prev = temp->prev;
+    if (temp->prev != NULL)
+        temp->prev->next = newNode;   /* previous node points to new node */
+    else
+        *head = newNode;              /* key was first node */
+    temp->prev = newNode;
+}
+
+void display(struct Node *head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    printf("NULL <-> ");
+    while (head != NULL) {
+        printf("%d <-> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node *head = NULL;
+    int choice, value, key;
+    do {
+        printf("\n1. Add node at end (build list)\n2. Insert after a node\n"
+               "3. Insert before a node\n4. Display\n0. Exit\nChoice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &value);
+                insertAtEnd(&head, value);
+                break;
+            case 2:
+                printf("Enter existing node value and new value: ");
+                scanf("%d %d", &key, &value);
+                insertAfter(head, key, value);
+                break;
+            case 3:
+                printf("Enter existing node value and new value: ");
+                scanf("%d %d", &key, &value);
+                insertBefore(&head, key, value);
+                break;
+            case 4:
+                display(head);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    } while (choice != 0);
+    return 0;
+}

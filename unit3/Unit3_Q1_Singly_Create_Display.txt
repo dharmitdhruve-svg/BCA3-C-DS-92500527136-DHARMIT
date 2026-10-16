@@ -1,0 +1,55 @@
+/* Unit 3 - Q1: Singly linked list - create a linked list, display it
+   Marwadi University - BCA | Language: C */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Structure of one node: data + pointer to next node */
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+/* Create a list of n nodes and return the head pointer */
+struct Node *create(int n) {
+    struct Node *head = NULL, *tail = NULL, *newNode;
+    int i;
+    for (i = 1; i <= n; i++) {
+        newNode = (struct Node *)malloc(sizeof(struct Node)); /* allocate memory */
+        printf("Enter data for node %d: ", i);
+        scanf("%d", &newNode->data);
+        newNode->next = NULL;           /* new node is always last */
+        if (head == NULL)               /* first node */
+            head = tail = newNode;
+        else {                          /* link after current tail */
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+    return head;
+}
+
+/* Traverse the list from head and print each node */
+void display(struct Node *head) {
+    struct Node *temp = head;
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    printf("List: ");
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node *head;
+    int n;
+    printf("How many nodes? ");
+    scanf("%d", &n);
+    head = create(n);
+    display(head);
+    return 0;
+}

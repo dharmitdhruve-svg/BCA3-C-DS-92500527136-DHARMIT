@@ -1,0 +1,120 @@
+/* Unit 3 - Q8: Doubly linked list - delete first / last / specific node
+   Marwadi University - BCA | Language: C */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+void insertAtEnd(struct Node **head, int value) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    struct Node *temp = *head;
+    newNode->data = value;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
+    }
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void deleteFirst(struct Node **head) {
+    struct Node *temp = *head;
+    if (temp == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    *head = temp->next;
+    if (*head != NULL)
+        (*head)->prev = NULL;   /* new first node has no previous */
+    free(temp);
+}
+
+void deleteLast(struct Node **head) {
+    struct Node *temp = *head;
+    if (temp == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    while (temp->next != NULL)   /* go to last node */
+        temp = temp->next;
+    if (temp->prev != NULL)
+        temp->prev->next = NULL; /* second last becomes last */
+    else
+        *head = NULL;            /* it was the only node */
+    free(temp);
+}
+
+void deleteSpecific(struct Node **head, int key) {
+    struct Node *temp = *head;
+    while (temp != NULL && temp->data != key)
+        temp = temp->next;
+    if (temp == NULL) {
+        printf("Node %d not found.\n", key);
+        return;
+    }
+    if (temp->prev != NULL)
+        temp->prev->next = temp->next;
+    else
+        *head = temp->next;      /* deleting the first node */
+    if (temp->next != NULL)
+        temp->next->prev = temp->prev;
+    free(temp);
+}
+
+void display(struct Node *head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    printf("NULL <-> ");
+    while (head != NULL) {
+        printf("%d <-> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node *head = NULL;
+    int choice, value;
+    do {
+        printf("\n1. Add node at end (build list)\n2. Delete first\n3. Delete last\n"
+               "4. Delete specific node\n5. Display\n0. Exit\nChoice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &value);
+                insertAtEnd(&head, value);
+                break;
+            case 2:
+                deleteFirst(&head);
+                break;
+            case 3:
+                deleteLast(&head);
+                break;
+            case 4:
+                printf("Enter value to delete: ");
+                scanf("%d", &value);
+                deleteSpecific(&head, value);
+                break;
+            case 5:
+                display(head);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    } while (choice != 0);
+    return 0;
+}
