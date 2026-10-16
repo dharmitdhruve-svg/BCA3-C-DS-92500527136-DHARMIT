@@ -1,0 +1,45 @@
+/* Unit 5 - Q1: Program to find out BFS
+   Marwadi University - BCA | Language: C */
+
+#include <stdio.h>
+
+#define MAX 20
+
+int adj[MAX][MAX];      /* adjacency matrix */
+int visited[MAX];       /* visited[i] = 1 if vertex i is already visited */
+int queue[MAX];         /* queue used by BFS */
+int front = 0, rear = -1;
+
+void bfs(int start, int n) {
+    int i, v;
+    visited[start] = 1;
+    queue[++rear] = start;              /* enqueue start vertex */
+    printf("BFS Traversal: ");
+    while (front <= rear) {
+        v = queue[front++];             /* dequeue */
+        printf("%d ", v);
+        for (i = 0; i < n; i++) {       /* visit all unvisited neighbours */
+            if (adj[v][i] == 1 && !visited[i]) {
+                visited[i] = 1;
+                queue[++rear] = i;      /* enqueue */
+            }
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int n, i, j, start;
+    printf("Enter number of vertices (max %d): ", MAX);
+    scanf("%d", &n);
+    printf("Enter adjacency matrix (%d x %d), 1 = edge, 0 = no edge:\n", n, n);
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &adj[i][j]);
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+    printf("Enter starting vertex (0 to %d): ", n - 1);
+    scanf("%d", &start);
+    bfs(start, n);
+    return 0;
+}
